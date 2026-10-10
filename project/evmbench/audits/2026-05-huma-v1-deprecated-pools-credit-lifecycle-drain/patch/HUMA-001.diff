@@ -1,0 +1,19 @@
+diff --git a/src/BaseCreditPool.sol b/src/BaseCreditPool.sol
+index a397c84..06ba5f0 100644
+--- a/src/BaseCreditPool.sol
++++ b/src/BaseCreditPool.sol
+@@ -271,6 +271,14 @@ contract BaseCreditPool is BasePool, BaseCreditPoolStorage, ICredit {
+         returns (BS.CreditRecord memory cr)
+     {
+         if (_creditRecordMapping[borrower].state != BS.CreditState.Defaulted) {
++            // [PATCH 2026-05-huma-v1] A credit line that has only been
++            // requested -- never approved by the evaluation agent -- must not
++            // be billable: billing a Requested record is exactly what lets
++            // _updateDueInfo() promote it to GoodStanding, from where
++            // drawdown() pays out pool reserves without any underwriting.
++            // Refreshing billing is meaningful only for active lines.
++            if (_creditRecordMapping[borrower].state == BS.CreditState.Requested)
++                revert Errors.creditLineNotInStateForDrawdown();
+             if (isDefaultReady(borrower)) return _updateDueInfo(borrower, false, false);
+             else return _updateDueInfo(borrower, false, true);
+         }

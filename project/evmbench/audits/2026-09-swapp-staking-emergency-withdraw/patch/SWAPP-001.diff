@@ -1,0 +1,12 @@
+diff --git a/src/Staking.sol b/src/Staking.sol
+index 8f4fa14..18c5663 100644
+--- a/src/Staking.sol
++++ b/src/Staking.sol
+@@ -487,6 +487,7 @@ contract Staking is ReentrancyGuard {
+     function emergencyWithdraw(address tokenAddress) public {
+         bool isStableCoin = checkStableCoin(tokenAddress);
+         require(!isStableCoin, "Cant withdraw stable coins");
++        require(tokenAddress != cUsdc && tokenAddress != cUsdt && tokenAddress != cDai, "Cant withdraw protocol receipt tokens");
+         require((getCurrentEpoch() - lastWithdrawEpochId[tokenAddress]) >= 10, "At least 10 epochs must pass without success");
+ 
+         uint256 totalUserBalance = balances[msg.sender][tokenAddress];

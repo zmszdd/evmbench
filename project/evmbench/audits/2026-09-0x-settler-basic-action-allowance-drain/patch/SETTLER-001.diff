@@ -1,0 +1,416 @@
+diff --git a/src/MainnetTakerSubmittedFlat.sol b/src/MainnetTakerSubmittedFlat.sol
+index f07df1b..e3fb9e5 100644
+--- a/src/MainnetTakerSubmittedFlat.sol
++++ b/src/MainnetTakerSubmittedFlat.sol
+@@ -262,7 +262,7 @@ interface IERC4626 is IERC20 {
+     /// - MUST NOT revert.
+     function asset() external view returns (address assetTokenAddress);
+ 
+-    /// @notice Returns the total amount of the underlying asset that is “managed” by Vault.
++    /// @notice Returns the total amount of the underlying asset that is 鈥渕anaged鈥?by Vault.
+     /// @dev
+     /// - SHOULD include any compounding that occurs from yield.
+     /// - MUST be inclusive of any fees that are charged against assets in the Vault.
+@@ -277,8 +277,8 @@ interface IERC4626 is IERC20 {
+     /// - MUST NOT reflect slippage or other on-chain conditions, when performing the actual exchange.
+     /// - MUST NOT revert.
+     ///
+-    /// NOTE: This calculation MAY NOT reflect the “per-user” price-per-share, and instead should reflect the
+-    /// “average-user’s” price-per-share, meaning what the average user should expect to see when exchanging to and
++    /// NOTE: This calculation MAY NOT reflect the 鈥減er-user鈥?price-per-share, and instead should reflect the
++    /// 鈥渁verage-user鈥檚鈥?price-per-share, meaning what the average user should expect to see when exchanging to and
+     /// from.
+     function convertToShares(uint256 assets) external view returns (uint256 shares);
+ 
+@@ -290,8 +290,8 @@ interface IERC4626 is IERC20 {
+     /// - MUST NOT reflect slippage or other on-chain conditions, when performing the actual exchange.
+     /// - MUST NOT revert.
+     ///
+-    /// NOTE: This calculation MAY NOT reflect the “per-user” price-per-share, and instead should reflect the
+-    /// “average-user’s” price-per-share, meaning what the average user should expect to see when exchanging to and
++    /// NOTE: This calculation MAY NOT reflect the 鈥減er-user鈥?price-per-share, and instead should reflect the
++    /// 鈥渁verage-user鈥檚鈥?price-per-share, meaning what the average user should expect to see when exchanging to and
+     /// from.
+     function convertToAssets(uint256 shares) external view returns (uint256 assets);
+ 
+@@ -326,7 +326,7 @@ interface IERC4626 is IERC20 {
+     /// - MUST revert if all of assets cannot be deposited (due to deposit limit being reached, slippage, the user not
+     ///   approving enough underlying tokens to the Vault contract, etc).
+     ///
+-    /// NOTE: most implementations will require pre-approval of the Vault with the Vault’s underlying asset token.
++    /// NOTE: most implementations will require pre-approval of the Vault with the Vault鈥檚 underlying asset token.
+     function deposit(uint256 assets, address receiver) external returns (uint256 shares);
+ 
+     /// @notice Returns the maximum amount of the Vault shares that can be minted for the receiver, through a mint call.
+@@ -359,7 +359,7 @@ interface IERC4626 is IERC20 {
+     /// - MUST revert if all of shares cannot be minted (due to deposit limit being reached, slippage, the user not
+     ///   approving enough underlying tokens to the Vault contract, etc).
+     ///
+-    /// NOTE: most implementations will require pre-approval of the Vault with the Vault’s underlying asset token.
++    /// NOTE: most implementations will require pre-approval of the Vault with the Vault鈥檚 underlying asset token.
+     function mint(uint256 shares, address receiver) external returns (uint256 assets);
+ 
+     /// @notice Returns the maximum amount of the underlying asset that can be withdrawn from the owner balance in the
+@@ -1753,7 +1753,7 @@ library Lib512MathArithmetic {
+     }
+ 
+     //// The technique implemented in the following functions for multiplication is
+-    //// adapted from Remco Bloemen's work https://2π.com/17/full-mul/ .
++    //// adapted from Remco Bloemen's work https://2蟺.com/17/full-mul/ .
+     //// The original code was released under the MIT license.
+ 
+     function _mul(uint256 x, uint256 y) private pure returns (uint256 r_hi, uint256 r_lo) {
+@@ -1881,13 +1881,13 @@ library Lib512MathArithmetic {
+     }
+ 
+     //// The technique implemented in the following functions for division is
+-    //// adapted from Remco Bloemen's work https://2π.com/21/muldiv/ .
++    //// adapted from Remco Bloemen's work https://2蟺.com/21/muldiv/ .
+     //// The original code was released under the MIT license.
+ 
+     function _roundDown(uint256 x_hi, uint256 x_lo, uint256 d) private pure returns (uint256 r_hi, uint256 r_lo) {
+         assembly ("memory-safe") {
+-            // Get the remainder [n_hi n_lo] % d (< 2²⁵⁶ - 1)
+-            // 2**256 % d = -d % 2**256 % d -- https://2π.com/17/512-bit-division/
++            // Get the remainder [n_hi n_lo] % d (< 2虏鈦碘伓 - 1)
++            // 2**256 % d = -d % 2**256 % d -- https://2蟺.com/17/512-bit-division/
+             let rem := mulmod(x_hi, sub(0x00, d), d)
+             rem := addmod(x_lo, rem, d)
+ 
+@@ -1911,7 +1911,7 @@ library Lib512MathArithmetic {
+             // gas by not bumping the free pointer.
+             r := mload(0x40)
+ 
+-            // Get the remainder [x_hi x_lo] % [d_hi d_lo] (< 2⁵¹² - 1) We use
++            // Get the remainder [x_hi x_lo] % [d_hi d_lo] (< 2鈦德孤?- 1) We use
+             // the MODEXP (5) precompile with an exponent of 1. We encode the
+             // arguments to the precompile at the beginning of free memory
+             // without allocating. Conveniently, `r` already points to this
+@@ -1941,12 +1941,12 @@ library Lib512MathArithmetic {
+     function _twos(uint256 x) private pure returns (uint256 twos, uint256 twosInv) {
+         assembly ("memory-safe") {
+             // Compute largest power of two divisor of `x`. `x` is nonzero, so
+-            // this is always ≥ 1.
++            // this is always 鈮?1.
+             twos := and(sub(0x00, x), x)
+ 
+             // To shift up (bits from the high limb into the low limb) we need
+-            // the inverse of `twos`. That is, 2²⁵⁶ / twos.
+-            //     2**256 / twos = -twos % 2**256 / twos + 1 -- https://2π.com/17/512-bit-division/
++            // the inverse of `twos`. That is, 2虏鈦碘伓 / twos.
++            //     2**256 / twos = -twos % 2**256 / twos + 1 -- https://2蟺.com/17/512-bit-division/
+             // If `twos` is zero, then `twosInv` becomes one (not possible)
+             twosInv := add(div(sub(0x00, twos), twos), 0x01)
+         }
+@@ -2024,9 +2024,9 @@ library Lib512MathArithmetic {
+ 
+     function _invert256(uint256 d) private pure returns (uint256 inv) {
+         assembly ("memory-safe") {
+-            // Invert `d` mod 2²⁵⁶ -- https://2π.com/18/multiplitcative-inverses/
++            // Invert `d` mod 2虏鈦碘伓 -- https://2蟺.com/18/multiplitcative-inverses/
+             // `d` is an odd number (from _toOdd*). It has an inverse modulo
+-            // 2²⁵⁶ such that d * inv ≡ 1 mod 2²⁵⁶.
++            // 2虏鈦碘伓 such that d * inv 鈮?1 mod 2虏鈦碘伓.
+             // We use Newton-Raphson iterations compute inv. Thanks to Hensel's
+             // lifting lemma, this also works in modular arithmetic, doubling
+             // the correct bits in each step. The Newton-Raphson-Hensel step is:
+@@ -2034,26 +2034,26 @@ library Lib512MathArithmetic {
+ 
+             // To kick off Newton-Raphson-Hensel iterations, we start with a
+             // seed of the inverse that is correct correct for four bits.
+-            //     d * inv ≡ 1 mod 2⁴
++            //     d * inv 鈮?1 mod 2鈦?
+             inv := xor(mul(0x03, d), 0x02)
+ 
+             // Each Newton-Raphson-Hensel step doubles the number of correct
+             // bits in `inv`. After 6 iterations, full convergence is
+             // guaranteed.
+-            inv := mul(inv, sub(0x02, mul(d, inv))) // inverse mod 2⁸
+-            inv := mul(inv, sub(0x02, mul(d, inv))) // inverse mod 2¹⁶
+-            inv := mul(inv, sub(0x02, mul(d, inv))) // inverse mod 2³²
+-            inv := mul(inv, sub(0x02, mul(d, inv))) // inverse mod 2⁶⁴
+-            inv := mul(inv, sub(0x02, mul(d, inv))) // inverse mod 2¹²⁸
+-            inv := mul(inv, sub(0x02, mul(d, inv))) // inverse mod 2²⁵⁶
++            inv := mul(inv, sub(0x02, mul(d, inv))) // inverse mod 2鈦?
++            inv := mul(inv, sub(0x02, mul(d, inv))) // inverse mod 2鹿鈦?
++            inv := mul(inv, sub(0x02, mul(d, inv))) // inverse mod 2鲁虏
++            inv := mul(inv, sub(0x02, mul(d, inv))) // inverse mod 2鈦垛伌
++            inv := mul(inv, sub(0x02, mul(d, inv))) // inverse mod 2鹿虏鈦?
++            inv := mul(inv, sub(0x02, mul(d, inv))) // inverse mod 2虏鈦碘伓
+         }
+     }
+ 
+     function _invert512(uint256 d) private pure returns (uint256 inv_hi, uint256 inv_lo) {
+-        // First, we get the inverse of `d` mod 2²⁵⁶
++        // First, we get the inverse of `d` mod 2虏鈦碘伓
+         inv_lo = _invert256(d);
+ 
+-        // To extend this to the inverse mod 2⁵¹², we perform a more elaborate
++        // To extend this to the inverse mod 2鈦德孤? we perform a more elaborate
+         // 7th Newton-Raphson-Hensel iteration with 512 bits of precision.
+ 
+         // tmp = d * inv_lo % 2**512
+@@ -2069,10 +2069,10 @@ library Lib512MathArithmetic {
+     }
+ 
+     function _invert512(uint256 d_hi, uint256 d_lo) private pure returns (uint256 inv_hi, uint256 inv_lo) {
+-        // First, we get the inverse of `d` mod 2²⁵⁶
++        // First, we get the inverse of `d` mod 2虏鈦碘伓
+         inv_lo = _invert256(d_lo);
+ 
+-        // To extend this to the inverse mod 2⁵¹², we perform a more elaborate
++        // To extend this to the inverse mod 2鈦德孤? we perform a more elaborate
+         // 7th Newton-Raphson-Hensel iteration with 512 bits of precision.
+ 
+         // tmp = d * inv_lo % 2**512
+@@ -2101,19 +2101,19 @@ library Lib512MathArithmetic {
+         // the division exact without affecting the result.
+         (n_hi, n_lo) = _roundDown(n_hi, n_lo, d);
+ 
+-        // Make `d` odd so that it has a multiplicative inverse mod 2²⁵⁶
++        // Make `d` odd so that it has a multiplicative inverse mod 2虏鈦碘伓
+         // After this we can discard `n_hi` because our result is only 256 bits
+         (n_lo, d) = _toOdd256(n_hi, n_lo, d);
+ 
+         // We perform division by multiplying by the multiplicative inverse of
+-        // the denominator mod 2²⁵⁶. Since `d` is odd, this inverse
++        // the denominator mod 2虏鈦碘伓. Since `d` is odd, this inverse
+         // exists. Compute that inverse
+         d = _invert256(d);
+ 
+         unchecked {
+             // Because the division is now exact (we rounded `n` down to a
+             // multiple of `d`), we perform it by multiplying with the modular
+-            // inverse of the denominator. This is the correct result mod 2²⁵⁶.
++            // inverse of the denominator. This is the correct result mod 2虏鈦碘伓.
+             return n_lo * d;
+         }
+     }
+@@ -2142,20 +2142,20 @@ library Lib512MathArithmetic {
+         // the division exact without affecting the result.
+         (n_hi, n_lo) = _roundDown(n_hi, n_lo, d_hi, d_lo);
+ 
+-        // Make `d_lo` odd so that it has a multiplicative inverse mod 2²⁵⁶
++        // Make `d_lo` odd so that it has a multiplicative inverse mod 2虏鈦碘伓
+         // After this we can discard `n_hi` and `d_hi` because our result is
+         // only 256 bits
+         (n_lo, d_lo) = _toOdd256(n_hi, n_lo, d_hi, d_lo);
+ 
+         // We perform division by multiplying by the multiplicative inverse of
+-        // the denominator mod 2²⁵⁶. Since `d_lo` is odd, this inverse
++        // the denominator mod 2虏鈦碘伓. Since `d_lo` is odd, this inverse
+         // exists. Compute that inverse
+         d_lo = _invert256(d_lo);
+ 
+         unchecked {
+             // Because the division is now exact (we rounded `n` down to a
+             // multiple of `d`), we perform it by multiplying with the modular
+-            // inverse of the denominator. This is the correct result mod 2²⁵⁶.
++            // inverse of the denominator. This is the correct result mod 2虏鈦碘伓.
+             return n_lo * d_lo;
+         }
+     }
+@@ -2174,11 +2174,11 @@ library Lib512MathArithmetic {
+         // the division exact without affecting the result.
+         (x_hi, x_lo) = _roundDown(x_hi, x_lo, y);
+ 
+-        // Make `y` odd so that it has a multiplicative inverse mod 2⁵¹²
++        // Make `y` odd so that it has a multiplicative inverse mod 2鈦德孤?
+         (x_hi, x_lo, y) = _toOdd512(x_hi, x_lo, y);
+ 
+         // We perform division by multiplying by the multiplicative inverse of
+-        // the denominator mod 2⁵¹². Since `y` is odd, this inverse
++        // the denominator mod 2鈦德孤? Since `y` is odd, this inverse
+         // exists. Compute that inverse
+         (uint256 inv_hi, uint256 inv_lo) = _invert512(y);
+ 
+@@ -2211,11 +2211,11 @@ library Lib512MathArithmetic {
+         // the division exact without affecting the result.
+         (x_hi, x_lo) = _roundDown(x_hi, x_lo, y_hi, y_lo);
+ 
+-        // Make `y` odd so that it has a multiplicative inverse mod 2⁵¹²
++        // Make `y` odd so that it has a multiplicative inverse mod 2鈦德孤?
+         (x_hi, x_lo, y_hi, y_lo) = _toOdd512(x_hi, x_lo, y_hi, y_lo);
+ 
+         // We perform division by multiplying by the multiplicative inverse of
+-        // the denominator mod 2⁵¹². Since `y` is odd, this inverse
++        // the denominator mod 2鈦德孤? Since `y` is odd, this inverse
+         // exists. Compute that inverse
+         (y_hi, y_lo) = _invert512(y_hi, y_lo);
+ 
+@@ -2272,15 +2272,15 @@ library Lib512MathArithmetic {
+     /// Volume 2, Section 4.3.1, Algorithm D.
+ 
+     function _algorithmD(uint256 x_hi, uint256 x_lo, uint256 y_hi, uint256 y_lo) private pure returns (uint256 q) {
+-        // We treat `x` and `y` each as ≤4-limb bigints where each limb is half
+-        // a machine word (128 bits). This lets us perform 2-limb ÷ 1-limb
++        // We treat `x` and `y` each as 鈮?-limb bigints where each limb is half
++        // a machine word (128 bits). This lets us perform 2-limb 梅 1-limb
+         // divisions as a single operation (`div`) as required by Algorithm
+         // D. It also simplifies/optimizes some of the multiplications.
+ 
+         if (y_hi >> 128 != 0) {
+             // y is 4 limbs, x is 4 limbs, q is 1 limb
+ 
+-            // Normalize. Ensure the uppermost limb of y ≥ 2¹²⁷ (equivalently
++            // Normalize. Ensure the uppermost limb of y 鈮?2鹿虏鈦?(equivalently
+             // y_hi >= 2**255). This is step D1 of Algorithm D
+             // The author's copy of TAOCP (3rd edition) states to set `d = (2 **
+             // 128 - 1) // y_hi`, however this is incorrect. Setting `d` in this
+@@ -2325,7 +2325,7 @@ library Lib512MathArithmetic {
+         } else {
+             // y is 3 limbs
+ 
+-            // Normalize. Ensure the most significant limb of y ≥ 2¹²⁷ (step D1)
++            // Normalize. Ensure the most significant limb of y 鈮?2鹿虏鈦?(step D1)
+             // See above comment about the error in TAOCP.
+             uint256 d = uint256(1 << 128).unsafeDiv(y_hi.unsafeInc());
+             (y_hi, y_lo) = _mul(y_hi, y_lo, d);
+@@ -2419,8 +2419,8 @@ library Lib512MathArithmetic {
+                 }
+             }
+         }
+-        // All other cases are handled by the checks that y ≥ 2²⁵⁶ (equivalently
+-        // y_hi != 0) and that x ≥ y
++        // All other cases are handled by the checks that y 鈮?2虏鈦碘伓 (equivalently
++        // y_hi != 0) and that x 鈮?y
+     }
+ 
+     /// Modified from Solady (https://github.com/Vectorized/solady/blob/a3d6a974f9c9f00dcd95b235619a209a63c61d94/src/utils/LibBit.sol#L33-L45)
+@@ -2488,15 +2488,15 @@ library Lib512MathArithmetic {
+         pure
+         returns (uint256, uint256)
+     {
+-        // We treat `x` and `y` each as ≤4-limb bigints where each limb is half
+-        // a machine word (128 bits). This lets us perform 2-limb ÷ 1-limb
++        // We treat `x` and `y` each as 鈮?-limb bigints where each limb is half
++        // a machine word (128 bits). This lets us perform 2-limb 梅 1-limb
+         // divisions as a single operation (`div`) as required by Algorithm D.
+ 
+         uint256 s;
+         if (y_hi >> 128 != 0) {
+             // y is 4 limbs, x is 4 limbs
+ 
+-            // Normalize. Ensure the uppermost limb of y ≥ 2¹²⁷ (equivalently
++            // Normalize. Ensure the uppermost limb of y 鈮?2鹿虏鈦?(equivalently
+             // y_hi >= 2**255). This is step D1 of Algorithm D Unlike the
+             // preceeding implementation of Algorithm D, we use a binary shift
+             // instead of a multiply to normalize. This performs a costly "count
+@@ -2528,7 +2528,7 @@ library Lib512MathArithmetic {
+             q_hat = _correctQ(q_hat, r_hat, x_hi & type(uint128).max, y_hi & type(uint128).max, y_hi);
+ 
+             {
+-                // This penultimate correction subtracts q-hat × y from x to
++                // This penultimate correction subtracts q-hat 脳 y from x to
+                 // obtain the normalized remainder. This is the "Multiply and
+                 // subtract" (D4) and "Test remainder" (D5) steps of Algorithm
+                 // D, with some shortcutting
+@@ -2548,7 +2548,7 @@ library Lib512MathArithmetic {
+         } else {
+             // y is 3 limbs
+ 
+-            // Normalize. Ensure the most significant limb of y ≥ 2¹²⁷ (step D1)
++            // Normalize. Ensure the most significant limb of y 鈮?2鹿虏鈦?(step D1)
+             // See above comment about the use of a shift instead of division.
+             s = _clzLower(y_hi);
+             (y_hi, y_lo) = _shl(y_hi, y_lo, s);
+@@ -2578,7 +2578,7 @@ library Lib512MathArithmetic {
+                 q_hat = _correctQ(q_hat, r_hat, x_hi & type(uint128).max, y_next, y_whole);
+ 
+                 // Subtract up to 1 from q-hat to make it exactly the
+-                // most-significant limb of the quotient and subtract q-hat × y
++                // most-significant limb of the quotient and subtract q-hat 脳 y
+                 // from x to clear the most-significant limb of x.
+                 {
+                     // "Multiply and subtract" (D4) step of Algorithm D
+@@ -2614,7 +2614,7 @@ library Lib512MathArithmetic {
+                 q_hat = _correctQ(q_hat, r_hat, x_lo >> 128, y_next, y_whole);
+ 
+                 // Again, implicitly correct q-hat to make it exactly the
+-                // least-significant limb of the quotient. Subtract q-hat × y
++                // least-significant limb of the quotient. Subtract q-hat 脳 y
+                 // from x to obtain the normalized remainder.
+                 {
+                     // Steps D4 and D5
+@@ -2642,7 +2642,7 @@ library Lib512MathArithmetic {
+                 // D3)
+                 q_hat = _correctQ(q_hat, r_hat, x_lo >> 128, y_next, y_whole);
+ 
+-                // Make `q_hat` exact (implicitly) and subtract q-hat × y from x
++                // Make `q_hat` exact (implicitly) and subtract q-hat 脳 y from x
+                 // to obtain the normalized remainder. (steps D4 through D6)
+                 {
+                     (uint256 tmp_hi, uint256 tmp_lo) = _mul(y_hi, y_lo, q_hat);
+@@ -2654,14 +2654,14 @@ library Lib512MathArithmetic {
+                 }
+             }
+         }
+-        // All other cases are handled by the checks that y ≥ 2²⁵⁶ (equivalently
+-        // y_hi != 0) and that x ≥ y
++        // All other cases are handled by the checks that y 鈮?2虏鈦碘伓 (equivalently
++        // y_hi != 0) and that x 鈮?y
+ 
+         // The second-most-significant limb of normalized x is now zero
+         // (equivalently x_hi < 2**128), but because the entire machine is not
+         // guaranteed to be cleared, we can't optimize any further.
+ 
+-        // [x_hi x_lo] now represents remainder × 2ˢ (the normalized remainder);
++        // [x_hi x_lo] now represents remainder 脳 2刷 (the normalized remainder);
+         // we shift right by `s` (un-normalize) to obtain the result.
+         return _shr(x_hi, x_lo, s);
+     }
+@@ -3055,7 +3055,7 @@ library FullMath {
+         }
+     }
+ 
+-    /// @notice Calculates a×b÷denominator with full precision then rounds towards 0. Throws if result overflows a uint256 or denominator == 0
++    /// @notice Calculates a脳b梅denominator with full precision then rounds towards 0. Throws if result overflows a uint256 or denominator == 0
+     /// @param a The multiplicand
+     /// @param b The multiplier
+     /// @param denominator The divisor
+@@ -3075,7 +3075,7 @@ library FullMath {
+         return _mulDivInvert(prod0, prod1, denominator, remainder);
+     }
+ 
+-    /// @notice Calculates a×b÷denominator with full precision then rounds towards 0. Overflowing a uint256 or denominator == 0 are GIGO errors
++    /// @notice Calculates a脳b梅denominator with full precision then rounds towards 0. Overflowing a uint256 or denominator == 0 are GIGO errors
+     /// @param a The multiplicand
+     /// @param b The multiplier
+     /// @param denominator The divisor
+@@ -3090,7 +3090,7 @@ library FullMath {
+         return _mulDivInvert(prod0, prod1, denominator, remainder);
+     }
+ 
+-    /// @notice Calculates a×b÷denominator with full precision then rounds towards 0. Overflowing a uint256 or denominator == 0 are GIGO errors
++    /// @notice Calculates a脳b梅denominator with full precision then rounds towards 0. Overflowing a uint256 or denominator == 0 are GIGO errors
+     /// @param a The multiplicand
+     /// @param b The multiplier
+     /// @param denominator The divisor
+@@ -5535,8 +5535,7 @@ abstract contract UniswapV3Fork is SettlerAbstract {
+ 
+ // src/core/Velodrome.sol
+ 
+-// Panic is included below in this flattened source; the original relative
+-// import is intentionally omitted so the self-contained task compiles.
++//import {Panic} from "../utils/Panic.sol";
+ 
+ interface IVelodromePair {
+     function metadata()
+@@ -5625,7 +5624,7 @@ abstract contract Velodrome is SettlerAbstract {
+     }
+ 
+     // For numerically approximating a solution to the `k = x^3 * y + y^3 * x` constant function
+-    // using Newton-Raphson, this is `∂k/∂y = 3 * x * y^2 + x^3`. The result has a basis of
++    // using Newton-Raphson, this is `鈭俴/鈭倅 = 3 * x * y^2 + x^3`. The result has a basis of
+     // `_VELODROME_TOKEN_BASIS`.
+     function _d(uint256 y, uint256 x) private pure returns (uint256) {
+         unchecked {
+@@ -5851,7 +5850,7 @@ abstract contract Basic is SettlerAbstract {
+     /// @dev Sell to a pool with a generic approval, transferFrom interaction.
+     /// offset in the calldata is used to update the sellAmount given a proportion of the sellToken balance
+     function basicSellToPool(IERC20 sellToken, uint256 bps, address pool, uint256 offset, bytes memory data) internal {
+-        if (_isRestrictedTarget(pool)) {
++        if (_isRestrictedTarget(pool) || address(pool) == address(sellToken)) {
+             revert ConfusedDeputy();
+         }
+ 

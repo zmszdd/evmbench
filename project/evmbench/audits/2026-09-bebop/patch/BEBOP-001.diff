@@ -1,0 +1,16 @@
+diff --git a/src/base/JamValidation.sol b/src/base/JamValidation.sol
+index b4d328f..4fe2c94 100644
+--- a/src/base/JamValidation.sol
++++ b/src/base/JamValidation.sol
+@@ -126,7 +126,10 @@ abstract contract JamValidation is IERC5267 {
+     /// @param signature The signature to validate
+     /// @param hooksHash The hash of the hooks to include in the order hash
+     function validateOrder(JamOrder calldata order, bytes calldata signature, bytes32 hooksHash) internal {
+-        // Allow settle from user without sig; For permit2 case, we already validated witness during the transfer
++        // Root-cause fix: a caller cannot manufacture an unsigned order and then
++        // use settlement interactions under the settlement contract allowance.
++        if (order.taker == msg.sender && signature.length == 0) revert InvalidSignatureLength();
++        // For permit2 case, we already validated witness during the transfer
+         if (order.taker != msg.sender && !order.usingPermit2) {
+             bytes32 orderHash = keccak256(abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR(), order.hash(hooksHash)));
+             validateSignature(order.taker, orderHash, signature);

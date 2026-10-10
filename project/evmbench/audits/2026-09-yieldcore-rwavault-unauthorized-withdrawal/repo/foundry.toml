@@ -1,0 +1,15 @@
+﻿[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+# Hermetic compiler: the pinned 0.8.24 binary rides with the repo (solc/
+# solc-0.8.24, sha256-verified against the official list.json) so neither the
+# image build nor the grading containers need binaries.soliditylang.org
+# (TLS-flaky from this network; the version pin alone still makes svm download).
+solc_version = "0.8.24"
+optimizer = true
+optimizer_runs = 1
+via_ir = true
+
+[fmt]
+line_length = 120

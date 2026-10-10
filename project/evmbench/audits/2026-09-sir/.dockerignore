@@ -1,0 +1,8 @@
+/exploit/
+/patch/
+/test/
+/findings/
+/config.yaml
+/authoring/
+/repo/out/
+/repo/cache/

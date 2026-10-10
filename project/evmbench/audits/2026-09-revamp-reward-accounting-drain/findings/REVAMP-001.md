@@ -1,0 +1,5 @@
+# Root cause
+
+`Revamp.listNewAsset` is permissionless and accepts any contract that exposes ERC20 metadata. `revamp` then treats the token transfer as a valid economic contribution while allocating the caller's native value to the global reward index. The attacker can therefore mint a valueless token, list it, and make an initial native contribution. A second controlled address makes a later contribution; because the first user's `rewardDebt` remains at the earlier index, `pendingReward` credits that first user with the later net contribution and caps it at twice the first contribution. The helper withdraws its principal and the first account withdraws principal plus the capped reward, consuming the reserve.
+
+The patch gates asset listing behind `onlyOwner`, so an untrusted caller cannot register an arbitrary token as a reward-bearing asset. The vulnerable source is the flattened Sourcify match for BSC address `0x46280c1a2e17cfc151f50a885363408368bb163a`; the task keeps that source unchanged under `repo/src/Revamp.sol`.

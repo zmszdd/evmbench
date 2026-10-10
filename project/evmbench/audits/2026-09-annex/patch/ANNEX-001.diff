@@ -1,0 +1,29 @@
+diff --git a/src/Liquidator.sol b/src/Liquidator.sol
+index a2b756f..ee27933 100644
+--- a/src/Liquidator.sol
++++ b/src/Liquidator.sol
+@@ -828,6 +828,7 @@ contract Liquidator is IPancakeCallee {
+ 
+     uint private closeFact;
+     uint private liqIncent;
++    address private activePair;
+ 
+     event RevenueWithdrawn(
+         address recipient,
+@@ -975,6 +976,7 @@ contract Liquidator is IPancakeCallee {
+         uint amount0 = IPancakePair(pair).token0() == r ? _amount : 0;
+         uint amount1 = IPancakePair(pair).token1() == r ? _amount : 0;
+ 
++        activePair = pair;
+         IPancakePair(pair).swap(amount0, amount1, address(this), data);
+     }
+ 
+@@ -987,6 +989,8 @@ contract Liquidator is IPancakeCallee {
+      * @param data (bytes): data passed through from the caller
+      */
+     function pancakeCall(address sender, uint amount0, uint amount1, bytes calldata data) override external {
++        require(msg.sender == activePair, "unexpected pair");
++        activePair = address(0);
+         // Unpack parameters sent from the `liquidate` function
+         // NOTE: these are being passed in from some other contract, and cannot necessarily be trusted
+         (address borrower, address repayAToken, address seizeAToken) = abi.decode(data, (address, address, address));

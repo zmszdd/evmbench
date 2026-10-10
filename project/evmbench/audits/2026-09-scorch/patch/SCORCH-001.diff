@@ -1,0 +1,44 @@
+diff --git a/src/Scorch.sol b/src/Scorch.sol
+index d86e677..86a0878 100644
+--- a/src/Scorch.sol
++++ b/src/Scorch.sol
+@@ -843,35 +843,10 @@ contract Scorch is Context, IERC20, Ownable {
+ 
+     // msg.sender burns tokens and recieve uniswap rate TAX FREE, instead of selling.
+     function scorch(uint256 amount) public returns (bool) {
+-        require(balanceOf(_msgSender()) >= amount, "not enough funds to burn");
+-
+-        address[] memory path = new address[](2);
+-        path[0] = address(this);
+-        path[1] = uniswapV2Router.WETH();
+-
+-        uint[] memory a = uniswapV2Router.getAmountsOut(amount, path);
+-
+-        uint256 cap;
+-        if (address(this).balance <= 1 ether) {
+-            cap = burnSub1EthCap;
+-        } else {
+-            cap = address(this).balance / burnCapDivisor;
+-        }
+-
+-        require(a[a.length - 1] <= cap, "amount greater than cap");
+-        require(
+-            address(this).balance >= a[a.length - 1],
+-            "not enough funds in contract"
+-        );
+-
+-        transferToAddressETH(_msgSender(), a[a.length - 1]);
+-        _burn(_msgSender(), amount);
+-
+-        totalBurnRewards += a[a.length - 1];
+-        totalBurned += amount;
+-
+-        emit BurnedTokensForEth(_msgSender(), amount, a[a.length - 1]);
+-        return true;
++        // Burns are paused until a manipulation-resistant oracle is installed.
++        // The vulnerable implementation paid a live AMM spot quote here.
++        amount; // keep the ABI and compiler warning behaviour stable
++        revert("scorch: oracle unavailable");
+     }
+ 
+     /// @notice A read function that returns the amount of eth received if you burned X amount of tokens

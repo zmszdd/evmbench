@@ -1,0 +1,41 @@
+diff --git a/src/AventaRewardClaim.sol b/src/AventaRewardClaim.sol
+index 7d8f1bd..d9fbdb1 100644
+--- a/src/AventaRewardClaim.sol
++++ b/src/AventaRewardClaim.sol
+@@ -2,26 +2,23 @@
+ pragma solidity ^0.8.25;
+ import "./MockERC20.sol";
+ 
+-/// Faithful core of the verified IntelliQuantRewardClaim contract at
+-/// 0x33b860fc7787e9e4813181b227eaffa0cada4c73.  It pays 25% of the caller's
+-/// current IntelliQuant balance from the owner's AVENTA allowance.
++/// Root-cause repair: eligibility is an owner-bound allocation. A transient
++/// balance in a fresh helper is not sufficient to claim; each beneficiary must
++/// be registered once with a fixed allocation before the claim window.
+ contract AventaRewardClaim {
+     address public owner;
+     MockERC20 public intelliQuant;
+     MockERC20 public aventa;
+-    mapping(address => uint256) public withdrawnAmount;
+-    mapping(address => uint256) public initialBalance;
++    mapping(address => uint256) public allocation;
++    mapping(address => bool) public claimed;
+     bool public paused;
+-    constructor(address oldToken, address rewardToken, address owner_) {
+-        owner = owner_; intelliQuant = MockERC20(oldToken); aventa = MockERC20(rewardToken);
+-    }
++    constructor(address oldToken, address rewardToken, address owner_) { owner = owner_; intelliQuant = MockERC20(oldToken); aventa = MockERC20(rewardToken); }
+     modifier onlyOwner() { require(msg.sender == owner, "owner"); _; }
++    function register(address user, uint256 amount) external onlyOwner { require(!claimed[user], "claimed"); allocation[user] = amount; }
+     function claim(address user) external {
+-        require(!paused, "paused"); require(user == msg.sender, "authorized user");
+-        if (initialBalance[user] == 0) initialBalance[user] = intelliQuant.balanceOf(user);
+-        uint256 amount = (intelliQuant.balanceOf(user) * 25) / 100;
+-        require(amount > 0 && withdrawnAmount[user] == 0, "No available");
+-        withdrawnAmount[user] = amount;
++        require(!paused && user == msg.sender, "unauthorized");
++        uint256 amount = allocation[user]; require(amount > 0 && !claimed[user], "No available");
++        claimed[user] = true; allocation[user] = 0;
+         require(aventa.transferFrom(owner, user, amount), "transfer failed");
+     }
+     function approveOwner(address spender, uint256 amount) external onlyOwner { aventa.approve(spender, amount); }

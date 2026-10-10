@@ -1,0 +1,12 @@
+diff --git a/src/MatezStakingProgram.sol b/src/MatezStakingProgram.sol
+index 034564b..2f0c4fc 100644
+--- a/src/MatezStakingProgram.sol
++++ b/src/MatezStakingProgram.sol
+@@ -223,6 +223,7 @@ contract MatezStakingProgram {
+ 
+     function stake(uint256 amnt) public {
+         require(users[msg.sender].id != 0  ,"Register Before Deposit!");
++        require(amnt <= uint256(uint128(-1)), "amount exceeds quote range");
+         
+         users[msg.sender].invest_count++;
+         address sponsor = users[msg.sender].sponsor;

@@ -1,0 +1,16 @@
+diff --git a/src/PythiaTokenStaking.sol b/src/PythiaTokenStaking.sol
+index 4c380d7..f8d050f 100644
+--- a/src/PythiaTokenStaking.sol
++++ b/src/PythiaTokenStaking.sol
+@@ -55,6 +55,11 @@ contract PythiaTokenStaking is Ownable, ReentrancyGuard, ERC20, AbstractRewards
+         escrowPortion = _escrowPortion;
+     }
+ 
++    function _update(address from, address to, uint256 value) internal override {
++        super._update(from, to, value);
++        if (from != address(0) && to != address(0)) { adjustPointsForTransfer(from, to, value); }
++    }
++
+     function updateEcrowPool(address _escrow) external onlyOwner {
+         require(_escrow != address(0), "zero add");
+         escrowPool = IEscrow(_escrow);

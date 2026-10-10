@@ -1,0 +1,13 @@
+diff --git a/src/SurgeToken.sol b/src/SurgeToken.sol
+index 758ae74..d56a307 100644
+--- a/src/SurgeToken.sol
++++ b/src/SurgeToken.sol
+@@ -621,7 +621,7 @@ contract SurgeToken is IERC20, Context, Ownable, ReentrancyGuard {
+         return _balances[holder].mul(calculatePrice());
+     }
+     
+-    receive() external payable {
++    receive() external payable nonReentrant {
+         uint256 val = msg.value;
+         address buyer = msg.sender;
+         purchase(buyer, val);

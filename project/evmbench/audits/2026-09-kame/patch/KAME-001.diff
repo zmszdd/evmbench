@@ -1,0 +1,25 @@
+diff --git a/src/AggregationRouter.sol b/src/AggregationRouter.sol
+index b8983b3..7921c1e 100644
+--- a/src/AggregationRouter.sol
++++ b/src/AggregationRouter.sol
+@@ -9,6 +9,12 @@ import {IAggregationExecutor} from "./interfaces/IAggregationExecutor.sol";
+ import "./interfaces/IAggregationRouter.sol";
+ 
+ contract AggregationRouter is IAggregationRouter, Ownable(msg.sender) {
++    // Root-cause fix: calls may target only the executor registered at deployment.
++    address public immutable trustedExecutor;
++
++    constructor() {
++        trustedExecutor = msg.sender;
++    }
+     using SafeERC20 for IERC20;
+     using UniERC20 for IERC20;
+ 
+@@ -25,6 +31,7 @@ contract AggregationRouter is IAggregationRouter, Ownable(msg.sender) {
+     }
+ 
+     function swap(SwapParams calldata params) external payable returns (uint256 returnAmount) {
++        if (params.executor != trustedExecutor) revert ExecuteFailed();
+         IERC20 srcToken = params.srcToken;
+         if (srcToken.isETH() && msg.value != params.amount) revert InvalidMsgValue();
+ 

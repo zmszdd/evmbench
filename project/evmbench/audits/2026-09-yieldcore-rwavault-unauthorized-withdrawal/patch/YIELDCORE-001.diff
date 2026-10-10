@@ -1,0 +1,28 @@
+diff --git a/src/vault/RWAVault.sol b/src/vault/RWAVault.sol
+index 8124e88..850dee6 100644
+--- a/src/vault/RWAVault.sol
++++ b/src/vault/RWAVault.sol
+@@ -693,6 +693,11 @@ contract RWAVault is
+ 
+         if (shares == 0) revert RWAErrors.ZeroAmount();
+ 
++        // ERC4626 delegated withdrawals must consume the owner's allowance.
++        if (msg.sender != owner) {
++            _spendAllowance(owner, msg.sender, shares);
++        }
++
+         // Calculate proportional debt to deduct
+         // [H-01 FIX] Round down debt to favor user (less debt deducted)
+         uint256 debtToDeduct = Math.mulDiv(userDebt, shares, info.shares, Math.Rounding.Floor);
+@@ -748,6 +753,11 @@ contract RWAVault is
+ 
+         if (shares == 0) revert RWAErrors.ZeroAmount();
+ 
++        // ERC4626 delegated redemptions must consume the owner's allowance.
++        if (msg.sender != owner) {
++            _spendAllowance(owner, msg.sender, shares);
++        }
++
+         // Hybrid system: Calculate gross value using ERC4626 standard
+         uint256 grossValue = convertToAssets(shares);
+ 

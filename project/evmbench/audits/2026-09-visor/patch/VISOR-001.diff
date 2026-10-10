@@ -1,0 +1,21 @@
+diff --git a/src/contracts/RewardsHypervisor.sol b/src/contracts/RewardsHypervisor.sol
+index 3aa3277..872612a 100644
+--- a/src/contracts/RewardsHypervisor.sol
++++ b/src/contracts/RewardsHypervisor.sol
+@@ -53,13 +53,9 @@ contract RewardsHypervisor {
+           shares = shares.mul(vvisr.totalSupply()).div(visrBalance);
+         }
+ 
+-        if(isContract(from)) {
+-          require(IVisor(from).owner() == msg.sender); 
+-          IVisor(from).delegatedTransferERC20(address(visr), address(this), visrDeposit);
+-        }
+-        else {
+-          visr.safeTransferFrom(from, address(this), visrDeposit);
+-        }
++        // Always pull the exact amount from the depositor. Contract senders
++        // cannot satisfy the deposit by presenting a no-op callback.
++        visr.safeTransferFrom(from, address(this), visrDeposit);
+ 
+         vvisr.mint(to, shares);
+     }

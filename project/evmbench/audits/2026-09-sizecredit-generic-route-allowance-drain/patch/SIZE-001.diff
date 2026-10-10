@@ -1,0 +1,12 @@
+diff --git a/src/LeverageUp.sol b/src/LeverageUp.sol
+index 479db50..a2743d4 100644
+--- a/src/LeverageUp.sol
++++ b/src/LeverageUp.sol
+@@ -6,6 +6,7 @@ contract LeverageUp {
+     constructor(address router) { approvedRouter=router; }
+     function leverageUpWithSwap(GenericRouteParams calldata p) external {
+         require(p.amountIn > 0, "amount");
++        require(p.router == approvedRouter, "router not approved");
+         IERC20Like(p.tokenIn).approve(p.router,p.amountIn);
+         (bool ok, bytes memory ret) = p.router.call(p.data);
+         require(ok, string(ret));

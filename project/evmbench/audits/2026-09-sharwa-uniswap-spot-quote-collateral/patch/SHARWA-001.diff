@@ -1,0 +1,12 @@
+diff --git a/src/contracts/modularSwapRouter/uniswap/UniswapModuleBase.sol b/src/contracts/modularSwapRouter/uniswap/UniswapModuleBase.sol
+index 179362a..7bb6a6f 100644
+--- a/src/contracts/modularSwapRouter/uniswap/UniswapModuleBase.sol
++++ b/src/contracts/modularSwapRouter/uniswap/UniswapModuleBase.sol
+@@ -84,6 +84,7 @@ abstract contract UniswapModuleBase is IPositionManagerERC20, AccessControl {
+         uint256 amountIn
+     ) external returns (uint amountOut) {
+         amountOut = quoter.quoteExactInput(path, amountIn);
++        require(amountOut <= amountIn * 2, "spot quote outside oracle bound");
+     }
+ 
+     function getOutputPositionValue(

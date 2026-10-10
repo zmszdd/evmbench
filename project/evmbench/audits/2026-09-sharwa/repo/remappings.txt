@@ -1,0 +1,4 @@
+@openzeppelin/contracts/=src/@openzeppelin/contracts/
+@chainlink/contracts/=src/@chainlink/contracts/
+@uniswap/v3-core/=src/@uniswap/v3-core/
+@uniswap/v3-periphery/=src/@uniswap/v3-periphery/

@@ -1,0 +1,24 @@
+diff --git a/src/VaultEPendle.sol b/src/VaultEPendle.sol
+index c92c943..05f7654 100644
+--- a/src/VaultEPendle.sol
++++ b/src/VaultEPendle.sol
+@@ -418,5 +418,19 @@ contract VaultEPendle is
+             ePendleRewardPool.balanceOf(address(this));
+     }
+ 
++    function _beforeTokenTransfer(address from, address to, uint256 amount) internal override {
++        super._beforeTokenTransfer(from, to, amount);
++        if (from != address(0)) _syncTransferReward(from);
++        if (to != address(0)) _syncTransferReward(to);
++    }
++
++    function _syncTransferReward(address account) internal {
++        for (uint256 i = 0; i < rewardTokens.length; i++) {
++            address rewardToken = rewardTokens[i];
++            UserReward storage userReward = userRewards[account][rewardToken];
++            userReward.rewards = earned(account, rewardToken);
++            userReward.userRewardPerTokenPaid = rewards[rewardToken].rewardPerTokenStored;
++        }
++    }
+     receive() external payable {}
+ }

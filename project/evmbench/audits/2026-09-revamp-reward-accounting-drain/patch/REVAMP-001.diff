@@ -1,0 +1,13 @@
+diff --git a/src/Revamp.sol b/src/Revamp.sol
+index 5116249..037c476 100644
+--- a/src/Revamp.sol
++++ b/src/Revamp.sol
+@@ -1676,7 +1676,7 @@ contract Revamp is ReentrancyGuard, Ownable {
+ 
+         string calldata logoUrl
+ 
+-    ) external payable nonReentrant {
++    ) external payable nonReentrant onlyOwner {
+ 
+         require(msg.value >= listingFee, "Fee too low");
+ 

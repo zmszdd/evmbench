@@ -1,0 +1,25 @@
+diff --git a/src/SorbettoFragola.sol b/src/SorbettoFragola.sol
+index 02178ab..514a85f 100644
+--- a/src/SorbettoFragola.sol
++++ b/src/SorbettoFragola.sol
+@@ -340,6 +340,11 @@ contract SorbettoFragola is ERC20Permit, ReentrancyGuard, ISorbettoFragola {
+         emit Rerange(tickLower, tickUpper, cache.amount0, cache.amount1);
+     }
+ 
++    function _beforeTokenTransfer(address from, address to, uint256) internal override {
++        if (from != address(0)) _updateFeesReward(from);
++        if (to != address(0)) _updateFeesReward(to);
++    }
++
+     // Calcs user share depending on deposited amounts
+     function _calcShare(uint128 liquidity, uint128 liquidityLast)
+         internal
+@@ -534,7 +539,7 @@ contract SorbettoFragola is ERC20Permit, ReentrancyGuard, ISorbettoFragola {
+         token1PerShareStored = _tokenPerShare(collect1, token1PerShareStored);
+ 
+         if (account != address(0)) {
+-            UserInfo storage user = userInfo[msg.sender];
++            UserInfo storage user = userInfo[account];
+             user.token0Rewards = _fee0Earned(account, token0PerShareStored);
+             user.token0PerSharePaid = token0PerShareStored;
+             

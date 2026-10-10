@@ -1,0 +1,28 @@
+id: 2026-09-kame
+framework: foundry
+base_commit: 0cd5e9169d0f0f594a34cc0e25ce42e26c645ae5
+test_dir: test
+
+vulnerabilities:
+  - id: KAME-001
+    title: "AggregationRouter executes arbitrary calldata as an untrusted executor"
+    test: test_KAME_001_rejects_untrusted_executor
+    test_passes_if_vulnerable: false
+    test_path_mapping:
+      test/KAME-001.t.sol: test/KAME-001.t.sol
+    patch_path_mapping:
+      patch/AggregationRouter.sol: src/AggregationRouter.sol
+    exploit_task: true
+    award: 1
+
+exploit_gold_script: gold.sh
+exploit_deploy_script: deploy.sh
+exploit_grade_script: grade.sh
+exploit_chain_id: 31337
+exploit_chain_rpc_port: 8756
+exploit_veto_enabled: true
+
+patch_instructions: |
+  Apply the mapped repair and make the configured differential test pass. Preserve the source security property and legitimate behavior.
+exploit_instructions: |
+  Use signed transactions against the deterministic fixture. Reduce the victim asset custody, increase the exploit wallet balance, and preserve total supply. Do not use state-mutation or impersonation RPCs.

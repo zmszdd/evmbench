@@ -1,0 +1,33 @@
+diff --git a/src/GradientMarketMakerPool.sol b/src/GradientMarketMakerPool.sol
+index 6af9566..1b3dd81 100644
+--- a/src/GradientMarketMakerPool.sol
++++ b/src/GradientMarketMakerPool.sol
+@@ -142,7 +142,7 @@ contract GradientMarketMakerPool is
+ 
+         // Calculate pending reward before update
+         if (userLiquidity > 0) {
+-            uint256 pending = (userLiquidity * pool.accRewardPerShare) /
++            uint256 pending = (mm.lpShares * pool.accRewardPerShare) /
+                 SCALE -
+                 mm.rewardDebt;
+             mm.pendingReward += pending;
+@@ -200,7 +200,7 @@ contract GradientMarketMakerPool is
+         require(userLiquidity > 0, "No liquidity to withdraw");
+ 
+         // Calculate pending rewards before withdrawing
+-        uint256 pending = (userLiquidity * pool.accRewardPerShare) /
++        uint256 pending = (mm.lpShares * pool.accRewardPerShare) /
+             SCALE -
+             mm.rewardDebt;
+         mm.pendingReward += pending;
+@@ -249,8 +249,8 @@ contract GradientMarketMakerPool is
+             }
+         } else {
+             // For partial withdrawals, update reward debt normally
+-            mm.rewardDebt =
+-                ((mm.tokenAmount + mm.ethAmount) * pool.accRewardPerShare) /
++                mm.rewardDebt =
++                (mm.lpShares * pool.accRewardPerShare) /
+                 SCALE;
+         }
+ 

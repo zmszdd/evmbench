@@ -1,0 +1,13 @@
+diff --git a/src/AnyswapV4Router.sol b/src/AnyswapV4Router.sol
+index 845bd9f..1ee272b 100644
+--- a/src/AnyswapV4Router.sol
++++ b/src/AnyswapV4Router.sol
+@@ -270,6 +270,8 @@ contract AnyswapV4Router {
+         uint toChainID
+     ) external {
+         address _underlying = AnyswapV1ERC20(token).underlying();
++        (bool supportsPermit, bytes memory permitData) = _underlying.staticcall(abi.encodeWithSignature("nonces(address)", from));
++        require(supportsPermit && permitData.length >= 32, "UNDERLYING_HAS_NO_PERMIT");
+         IERC20(_underlying).permit(from, address(this), amount, deadline, v, r, s);
+         TransferHelper.safeTransferFrom(_underlying, from, token, amount);
+         AnyswapV1ERC20(token).depositVault(amount, from);

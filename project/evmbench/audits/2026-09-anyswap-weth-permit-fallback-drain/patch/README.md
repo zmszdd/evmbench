@@ -1,0 +1,1 @@
+The patched source is the verified AnyswapV4Router implementation with an ERC-2612 capability check added immediately before the permit call. The full source is copied from the intake artifact during task assembly.

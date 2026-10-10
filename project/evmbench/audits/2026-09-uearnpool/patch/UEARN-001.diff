@@ -1,0 +1,14 @@
+diff --git a/src/UEarnPool.sol b/src/UEarnPool.sol
+index 0187221..fd49cbb 100644
+--- a/src/UEarnPool.sol
++++ b/src/UEarnPool.sol
+@@ -141,6 +141,9 @@ abstract contract AbsPool is Ownable {
+ 
+     function bindInvitor(address invitor) external {
+         address account = msg.sender;
++        // Root cause fix: referral identities must be externally owned accounts.
++        // Contract farms can no longer create a sybil tree in one transaction.
++        require(msg.sender.code.length == 0, "contract account");
+         require(invitor != account, "self");
+         require(address(0) != invitor, "invitor 0");
+         require(address(0) == _invitor[account], "Bind");

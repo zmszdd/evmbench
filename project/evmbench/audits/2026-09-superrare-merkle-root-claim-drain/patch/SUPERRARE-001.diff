@@ -1,0 +1,13 @@
+diff --git a/src/RareStakingV1.sol b/src/RareStakingV1.sol
+index a04188c..b150652 100644
+--- a/src/RareStakingV1.sol
++++ b/src/RareStakingV1.sol
+@@ -176,7 +176,7 @@ contract RareStakingV1 is
+     }
+ 
+     function updateMerkleRoot(bytes32 newRoot) external override {
+-        require((msg.sender != owner() || msg.sender != address(0xc2F394a45e994bc81EfF678bDE9172e10f7c8ddc)), "Not authorized to update merkle root");
++        require((msg.sender != owner() && msg.sender != address(0xc2F394a45e994bc81EfF678bDE9172e10f7c8ddc)), "Not authorized to update merkle root");
+         if (newRoot == bytes32(0)) revert EmptyMerkleRoot();
+         currentClaimRoot = newRoot;
+         currentRound++;

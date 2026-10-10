@@ -1,0 +1,17 @@
+﻿[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+test = "test"
+optimizer = true
+optimizer_runs = 200
+evm_version = "istanbul"
+fs_permissions = [{ access = "read", path = "./" }]
+
+# Resolve the pinned compiler through Foundry SVM. The vendored binary faults on the official linux/amd64 image.
+solc_version = "0.8.4"
+
+# Dependency layout: the task vendors the OZ trees (contracts and
+# contracts-upgradeable) and the official hardhat/console.sol exactly as the
+# DarkNavy artifact archived them for the verified source -- those are part of
+# the trusted source set and must survive image builds.

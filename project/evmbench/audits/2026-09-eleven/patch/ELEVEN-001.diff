@@ -1,0 +1,19 @@
+diff --git a/src/ElevenNeverSellVault.sol b/src/ElevenNeverSellVault.sol
+index 430a7db..0856e79 100644
+--- a/src/ElevenNeverSellVault.sol
++++ b/src/ElevenNeverSellVault.sol
+@@ -1126,11 +1126,10 @@ constructor (
+     
+     function emergencyBurn() public {
+         uint balan = balanceOf(msg.sender);
+-        // Vulnerable behavior: emergencyBurn pays the underlying but leaves
+-        // the caller's shares intact, allowing withdrawAll to redeem again.
++        _burn(msg.sender, balan);
+         uint avai = available();
+         if(avai<balan) IMasterMind(mastermind).withdraw(nrvPid, (balan.sub(avai)));
+         token.safeTransfer(msg.sender, balan);
+         emit Withdrawn(msg.sender, balan, block.number);
+     }
+-}
++}
+\ No newline at end of file

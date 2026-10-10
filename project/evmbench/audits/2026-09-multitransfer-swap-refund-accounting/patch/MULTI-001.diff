@@ -1,0 +1,25 @@
+diff --git a/src/MultiTransferSwap.sol b/src/MultiTransferSwap.sol
+index af3abe1..23e164f 100644
+--- a/src/MultiTransferSwap.sol
++++ b/src/MultiTransferSwap.sol
+@@ -302,15 +302,18 @@ contract MultiTransferSwap is Ownable {
+     {
+         require(path[0] == WETH, 'UniswapV2Router: INVALID_PATH');
+ 
++        uint totalInput;
+         for (uint i; i < times; i++){
+             amounts = UniswapV2Library.getAmountsIn(factory, amountOut, path);
+             require(amounts[0] <= msg.value.div(times), 'UniswapV2Router: EXCESSIVE_INPUT_AMOUNT');
+             IWETH(WETH).deposit{value: amounts[0]}();
+             assert(IWETH(WETH).transfer(UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]));
+             _swap(amounts, path, to);
++            totalInput = totalInput.add(amounts[0]);
+         }
+-        // refund dust eth, if any
+-        if (msg.value > amounts[0].mul(times)) TransferHelper.safeTransferETH(msg.sender, msg.value - amounts[0].mul(times));
++        // refund only the unused amount after all swaps.
++        if (msg.value > totalInput) TransferHelper.safeTransferETH(msg.sender, msg.value - totalInput);
+     }
+ }
+ 
++
